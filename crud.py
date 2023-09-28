@@ -12,25 +12,37 @@ def add():
     contacts.append({"name":fName + " " +lName, "number":int(number)})
     return contacts
 
-def delete():
-    for i in range(len(contacts)):
-        deleteName = input("Enter name to be deleted: ")
-        if contacts[i]["name"].lower() == deleteName.strip().lower():
-            contacts.pop(i)
-            print("Contact succesfully deleted.")
+def delete(contacts):
+    deleteName = input("Enter name to be deleted: ")
+    foundName = False
+    for contact in contacts:
+        if contact["name"].lower() == deleteName.strip().lower():
+            contacts.remove(contact)
+            foundName = True
             break
-        else:
-            print("Wrong name/contact name does not exists.")
-            break
+    
+    if foundName == False:
+        print("{} is not in the contacts.".format(deleteName)) 
+    
+    return contacts
 
 def display(contacts):
     for i in contacts:
         print(i)
 
-def search():
-    pass
+def search(contacts):
+    searchName = input("Enter name to be search: ")
+    foundSearchedName = False
+    for contact in contacts:
+        if contact["name"].lower() == searchName.strip().lower():
+            print(contact)
+            foundSearchedName = True        
+            break
+    
+    if foundSearchedName == False:
+        print("{} is not in the contacts.".format(searchName))
 
-def update():
+def update(contacts):
     pass
 
 print("=========================")
@@ -38,19 +50,19 @@ print("Sample CRUD")
 print("=========================\n")
 
 while True:
-    choose = input("\nPress the following:\n[1]Add contacts\n[2]Delete contact/s\n[3]Display contacts\n[4]Search a contact\n[5]Update a contact\n[0]Exit\n")
+    choose = input("\n[1]Add contacts\n[2]Delete contact/s\n[3]Display contacts\n[4]Search a contact\n[5]Update a contact\n[0]Exit\nChoose an option: \n")
 
     if choose == "1":
         add()
         
     elif choose == "2":
-        delete()
+        delete(contacts)
         
     elif choose == "3":
         display(contacts)
         
     elif choose == "4":
-        search()
+        search(contacts)
         
     elif choose == "5":
         update()
