@@ -30,8 +30,29 @@ def add(contactsFile):
 
         # Write the new item as a row
         writer.writerow(newContact)
+        
+def display(contactsFile):
+    with open(contactsFile, mode="r", newline="") as csv_file:
+        reader =csv.DictReader(csv_file)
+        for row in reader:
+            print(row)
 
-def delete(contacts):
+def search(contactsFile):
+    searchName = input("Enter name to be search: ")
+    foundSearchedName = False
+    for contact in contacts:
+        if contact["name"].lower() == searchName.strip().lower():
+            print(contact)
+            foundSearchedName = True        
+            break
+    
+    if foundSearchedName == False:
+        print("{} is not in the contacts.".format(searchName))
+
+def update(contactsFile):
+    pass
+
+def delete(contactsFile):
     deleteName = input("Enter name to be deleted: ")
     foundName = False
     for contact in contacts:
@@ -45,24 +66,6 @@ def delete(contacts):
     
     return contacts
 
-def display(contacts):
-    for i in contacts:
-        print(i)
-
-def search(contacts):
-    searchName = input("Enter name to be search: ")
-    foundSearchedName = False
-    for contact in contacts:
-        if contact["name"].lower() == searchName.strip().lower():
-            print(contact)
-            foundSearchedName = True        
-            break
-    
-    if foundSearchedName == False:
-        print("{} is not in the contacts.".format(searchName))
-
-def update(contacts):
-    pass
 
 print("=========================")
 print("Sample CRUD")
@@ -75,16 +78,16 @@ while True:
         add(contactsFile)
         
     elif choose == "2":
-        delete(contacts)
+        delete(contactsFile)
         
     elif choose == "3":
-        display(contacts)
+        display(contactsFile)
         
     elif choose == "4":
-        search(contacts)
+        search(contactsFile)
         
     elif choose == "5":
-        update()
+        update(contactsFile)
         
     elif choose == "0":
         break
