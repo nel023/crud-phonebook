@@ -6,7 +6,6 @@ contactInfo = {}
 fName = ""
 lName = ""
 number = ""
-contacts = []
 
 contactsFile = "contacts.csv"
 
@@ -19,53 +18,78 @@ def add(contactsFile):
         "number": int(number)
     }
           
-    with open(contactsFile, mode="a", newline="") as csv_file:
-        # Define the CSV writer
-        fieldnames = newContact.keys()  # Use the keys from the new_item as fieldnames
+    with open(contactsFile, mode="a", newline="") as csv_file:      # Define the CSV writer
+        fieldnames = newContact.keys()      # Use the keys from the new_item as fieldnames
         writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
 
-    # If the file is empty, write the header row
-        if csv_file.tell() == 0:
+        if csv_file.tell() == 0:        # If the file is empty, write the header row
             writer.writeheader()
 
-        # Write the new item as a row
-        writer.writerow(newContact)
-        
+        writer.writerow(newContact)     # Write the new item as a row
+
+def delete(contactsFile, deleteName):
+    data = []
+    foundName = False
+    
+    with open(contactsFile, mode="r", newline="") as csv_file:
+        reader = csv.DictReader(csv_file)
+        for contact in reader:
+            data.append(contact)
+            
+    newData = []
+    for row in data:
+        if row["name"].strip().lower() != deleteName.strip().lower():
+            newData.append(row)
+        else:
+            foundName = True
+            
+    if foundName:
+        with open(contactsFile, mode="w", newline="") as file:
+            fieldnames = data[0].keys()
+            writer = csv.DictWriter(file, fieldnames=fieldnames)
+            writer.writeheader()
+            writer.writerows(newData)
+    
+    return foundName
+       
 def display(contactsFile):
     with open(contactsFile, mode="r", newline="") as csv_file:
         reader =csv.DictReader(csv_file)
         for row in reader:
             print(row)
-
+        
 def search(contactsFile):
     searchName = input("Enter name to be search: ")
     foundSearchedName = False
-    for contact in contacts:
-        if contact["name"].lower() == searchName.strip().lower():
-            print(contact)
-            foundSearchedName = True        
-            break
+    with open(contactsFile, mode="r", newline="") as csv_file:
+        reader = csv.DictReader(csv_file)
+    
+        for contact in reader:
+            if contact["name"].lower() == searchName.strip().lower():
+                print(contact)
+                foundSearchedName = True
+                break
     
     if foundSearchedName == False:
         print("{} is not in the contacts.".format(searchName))
 
 def update(contactsFile):
-    pass
-
-def delete(contactsFile):
-    deleteName = input("Enter name to be deleted: ")
-    foundName = False
-    for contact in contacts:
-        if contact["name"].lower() == deleteName.strip().lower():
-            contacts.remove(contact)
-            foundName = True
-            break
+    data = []
+    updateName = input("Enter contact name to be update: ")
+    foundUpdateName = False
+    with open(contactsFile, mode="r", newline="") as csv_file:
+        reader = csv.DictReader(csv_file)
+        for contact in reader:
+            data.append(contact)
+            
+    newData = []
+    for row in data:
+        if row["name"].strip().lower() != updateName.strip().lower():
+            newData.append(row)
+        else:
+            foundUpdateName = True
     
-    if foundName == False:
-        print("{} is not in the contacts.".format(deleteName)) 
     
-    return contacts
-
 
 print("=========================")
 print("Sample CRUD")
@@ -78,8 +102,13 @@ while True:
         add(contactsFile)
         
     elif choose == "2":
-        delete(contactsFile)
-        
+        deleteName = input("Enter name to be deleted: ")
+        value = delete(contactsFile, deleteName)
+        if value:
+            print("{} was successfully deleted in contacts.".format(deleteName))
+        else:
+            print("{} is not in the contacts.".format(deleteName))
+             
     elif choose == "3":
         display(contactsFile)
         
